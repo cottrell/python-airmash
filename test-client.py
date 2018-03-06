@@ -1,6 +1,10 @@
 import threading
-
+import os
+import secrets
+import argh
 from airmash.client import Client
+
+client = Client(enable_debug=True)
 
 class StoppableThread(threading.Thread):
     def __init__(self, *args, **kwargs):
@@ -29,8 +33,6 @@ def track_position(player, key, old, new):
 def track_rotation(player, key, old, new):
     print("Rotation: {}".format(new))
 
-client = Client(enable_debug=False)
-
 @client.on('LOGIN')
 def on_login(client, message):
     print("Client has logged in!")
@@ -43,17 +45,27 @@ def on_hit(client, message):
     for player in message.players:
         if player.id == client.player.id:
             print("Uh oh! I've been hit!")
+    
+_mydir = os.path.realpath(os.path.dirname(__file__))
+_hashfile = os.path.join(_mydir, '.hashes')
+if not os.path.exists(_hashfile):
+    print(secrets.token_hex(nbytes=2), file=open(_hashfile, 'w'))
+_hash = open(_hashfile).read().strip()
 
-_t_update = ClientUpdate()
-_t_update.start()
+def run(name='TestBot_{}'.format(_hash), flag='GB', region='eu', room='ffa1', enable_trace=False):
+    print('name = {}'.format(name))
+    _t_update = ClientUpdate()
+    _t_update.start()
 
-client.connect(
-    name='TestBot',
-    flag='GB',
-    region='eu',
-    room='ffa1',
-    enable_trace=False
-)
+    client.connect(
+        name=name,
+        flag=flag,
+        region=region,
+        room=room,
+        enable_trace=False
+    )
+    _t_update.stop()
+    _t_update.join()
 
-_t_update.stop()
-_t_update.join()
+if __name__ == '__main__':
+    argh.dispatch_command(run)

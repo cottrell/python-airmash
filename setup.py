@@ -9,6 +9,7 @@ setup(
         url = 'https://github.com/gadgetoid/python-airmash', # use the URL to the github repo
         classifiers = [],
         install_requires = [
-            'construct'
+            'construct',
+            'argh'
             ]
 )
