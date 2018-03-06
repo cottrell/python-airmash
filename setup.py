@@ -8,4 +8,7 @@ setup(
         author_email = 'phil@gadgetoid.com',
         url = 'https://github.com/gadgetoid/python-airmash', # use the URL to the github repo
         classifiers = [],
+        install_requires = [
+            'construct'
+            ]
 )
