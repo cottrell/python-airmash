@@ -5,6 +5,8 @@ import secrets
 import argh
 from airmash.client import Client
 
+_mydir = os.path.realpath(os.path.dirname(__file__))
+
 client = Client(enable_debug=True)
 
 
@@ -52,13 +54,6 @@ def on_hit(client, message):
     for player in message.players:
         if player.id == client.player.id:
             print("Uh oh! I've been hit!")
-
-
-_mydir = os.path.realpath(os.path.dirname(__file__))
-_hashfile = os.path.join(_mydir, '.hashes')
-if not os.path.exists(_hashfile):
-    print(secrets.token_hex(nbytes=2), file=open(_hashfile, 'w'))
-_hash = open(_hashfile).read().strip()
 
 
 def run(name=None, flag='GB', region='eu', room='ffa1', enable_trace=False):

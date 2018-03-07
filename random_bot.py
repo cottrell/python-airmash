@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import os
 from airmash import packets
 from airmash.player import Player
 from airmash.mob import Mob
@@ -11,6 +12,8 @@ import threading
 import time
 import names
 
+_mydir = os.path.realpath(os.path.dirname(__file__))
+
 UP = 'UP'
 DOWN = 'DOWN'
 LEFT = 'LEFT'
@@ -18,7 +21,7 @@ RIGHT = 'RIGHT'
 FIRE = 'FIRE'
 SPECIAL = 'SPECIAL'
 
-client = Client()
+client = Client(enable_debug=True)
 
 def rare():
     return random.randrange(0, 10) == 0
@@ -99,7 +102,7 @@ def run(name=None, flag='GB', region='eu', room='ffa1', enable_trace=False):
         flag=flag,
         region=region,
         room=room,
-        enable_trace=False
+        enable_trace=True
     )
     
     _t_update.stop()
