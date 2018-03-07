@@ -45,11 +45,16 @@ class Client:
         self._debug_print(packets.DEBUG_INFO, "### closed ###")
 
     def _on_message(self, ws, message):
+        print(message)
+        print(message.decode())
+        print(ws)
         self.process_message(
             packets.decode_server_command(message))
 
     def _on_error(self, ws, error):
-        self._debug_print(packets.DEBUG_ERROR, error)
+        # self._debug_print(packets.DEBUG_ERROR, error)
+        print('HERE', packets.DEBUG_ERROR)
+        print('HERE', error)
 
     @property
     def player(self):

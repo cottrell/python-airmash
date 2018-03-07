@@ -10,6 +10,7 @@ setup(
     classifiers=[],
     install_requires=[
         'construct',
-            'argh'
+        'argh',
+        'names'
     ]
 )

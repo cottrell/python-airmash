@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from airmash import games
 
 url = games.get_url('eu', 'ffa1')

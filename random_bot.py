@@ -1,10 +1,10 @@
-#! /usr/bin/python3
-
+#!/usr/bin/python3
 from airmash import packets
 from airmash.player import Player
 from airmash.mob import Mob
 from airmash.country import COUNTRY_CODES
 from airmash import games
+from airmash.client import Client
 import random
 import websocket
 import threading
@@ -18,10 +18,10 @@ RIGHT = 'RIGHT'
 FIRE = 'FIRE'
 SPECIAL = 'SPECIAL'
 
+client = Client()
 
 def rare():
     return random.randrange(0, 10) == 0
-
 
 class StoppableThread(threading.Thread):
     def __init__(self, *args, **kwargs):
@@ -83,30 +83,27 @@ class ClientUpdate(StoppableThread):
             #print("Position: {}:{}".format(me.posX, me.posY))
 
 
-client = Client()
-
-
 @client.on('LOGIN')
 def on_login(client, message):
     print("Client has logged in!")
 
+def run(name=None, flag='GB', region='eu', room='ffa1', enable_trace=False):
+    if name is None:
+        name = names.get_full_name()
+    print('name = {}'.format(name))
+    _t_update = ClientUpdate()
+    _t_update.start()
+    
+    client.connect(
+        name=name,
+        flag=flag,
+        region=region,
+        room=room,
+        enable_trace=False
+    )
+    
+    _t_update.stop()
+    _t_update.join()
 
-_t_update = ClientUpdate()
-_t_update.start()
-
-name = names.get_full_name()
-if rare():
-    name = "Robot " + name
-name = name[:20]
-print("Name is ", name)
-
-client.connect(
-    name=name,
-    flag='US',
-    region='us',
-    room='ffa1',
-    enable_trace=True
-)
-
-_t_update.stop()
-_t_update.join()
+if __name__ == '__main__':
+    argh.dispatch_command(run)

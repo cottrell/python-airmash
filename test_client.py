@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import threading
 import os
 import secrets
@@ -60,7 +61,9 @@ if not os.path.exists(_hashfile):
 _hash = open(_hashfile).read().strip()
 
 
-def run(name='TestBot_{}'.format(_hash), flag='GB', region='eu', room='ffa1', enable_trace=False):
+def run(name=None, flag='GB', region='eu', room='ffa1', enable_trace=False):
+    if name is None:
+        name = names.get_full_name()
     print('name = {}'.format(name))
     _t_update = ClientUpdate()
     _t_update.start()
