@@ -9,13 +9,8 @@ setup(
     url='https://github.com/gadgetoid/python-airmash',  # use the URL to the github repo
     classifiers=[],
     install_requires=[
-        # 'construct',
+        'construct',
         'argh',
         'names'
     ],
-    dependency_links=[
-        # 'git@github.com:construct/construct.git',
-        'git+https://github.com/construct/construct.git'
-        ],
-
 )
