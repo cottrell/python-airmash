@@ -188,7 +188,7 @@ server = {
         'command' / Default(ServerCommands, 'PLAYER_UPDATE'),
         'clock' / Int32ul,
         'id' / Int16ul,
-        'keystate' / KeyState, # 1 = UP, 2 = DOWN, 4 = LEFT, 8 = RIGHT
+        'keystate' / KeyState,  # 1 = UP, 2 = DOWN, 4 = LEFT, 8 = RIGHT
         'upgrades' / Int8ub,
         'posX' / Coord24,
         'posY' / Coord24,
@@ -214,7 +214,7 @@ server = {
             'maxSpeed' / Speed
         ))
     ),
-    #server_commands['PLAYER_SAY']: Struct(
+    # server_commands['PLAYER_SAY']: Struct(
     #    'id' / Int16ul,
     #    'text' / Text
     #),
@@ -521,9 +521,11 @@ server = {
     )
 }
 
+
 def build_player_command(command,  **kwargs):
     id = player_commands[command]
     return player[id].build(kwargs)
+
 
 def decode_server_command(command):
     id = command[0]

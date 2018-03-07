@@ -13,24 +13,30 @@ REQUEST_RATE = 5
 last_data = None
 cached_data = None
 
+
 def build_host(host='', room=''):
     return GAME_ADDR.format(host=host, room=room)
+
 
 def get_region(region='eu'):
     data = get_data()
     return data['regions'][region]
 
+
 def get_game(region='eu', room='ffa1'):
     data = get_data()
     return data['regions'][region]['games'][room]
+
 
 def get_url(region='eu', room='ffa1'):
     data = get_game(region, room)
     return data['url']
 
+
 def get_protocol():
     data = get_data()
     return data['protocol']
+
 
 def get_data():
     global cached_data, last_data
@@ -44,7 +50,7 @@ def get_data():
     url = urlopen(request)
     data = json.loads(url.read().decode())
     src_regions = json.loads(data['data'])
-    
+
     regions = {}
 
     for region in src_regions:
@@ -64,12 +70,10 @@ def get_data():
             'games': games
         }
 
-    cached_data =  {
+    cached_data = {
         'protocol': data['protocol'],
         'regions': regions
     }
 
     last_data = time.time()
     return cached_data
-
-

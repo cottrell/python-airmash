@@ -37,7 +37,7 @@ class Mob():
 
                 if key == 'posX' or key == 'posY':
                     self._handle_change('position', (old.get('posX'), old.get('posY')), (self.posX, self.posY))
-                
+
                 if key == 'speedX' or key == 'speedY':
                     self._handle_change('speed', (old.get('posX'), old.get('posY')), (self.posX, self.posY))
 

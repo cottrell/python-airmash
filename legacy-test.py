@@ -18,17 +18,22 @@ DEBUG_ERROR = 3
 
 DEBUG_TEXT = ["Info", "Action", "Warning", "Error"]
 
+
 def track_rotation(player, key, old, new):
     print("Rotation: {}".format(new))
+
 
 def track_position(player, key, old, new):
     print("Position: {}".format(new))
 
+
 def debug_print(level, text):
     print("{}: {}".format(DEBUG_TEXT[level], text))
 
+
 def chat_print(*args):
     print(*args)
+
 
 class StoppableThread(threading.Thread):
     def __init__(self, *args, **kwargs):
@@ -40,6 +45,7 @@ class StoppableThread(threading.Thread):
 
     def wait(self, timeout=1):
         return self._event.wait(timeout=timeout)
+
 
 class ClientUpdate(StoppableThread):
     def __init__(self, *args, **kwargs):
@@ -71,7 +77,7 @@ class ClientUpdate(StoppableThread):
             #ws.send(packet, opcode=websocket.ABNF.OPCODE_BINARY)
             #key = keys[key_num % len(keys)]
             #key_num += 1
-            #for old_key in keys:
+            # for old_key in keys:
             #    if old_key != key:
             #        if states[old_key]:
             #            packet = packets.build_player_command('KEY', dict(seq=seq, key=old_key, state=False))
@@ -84,6 +90,7 @@ class ClientUpdate(StoppableThread):
             #states[key] = True
             #debug_print("Position: {}:{}".format(me.posX, me.posY))
 
+
 players = {}
 projectiles = {}
 me = None
@@ -95,16 +102,17 @@ def on_open(ws):
     global _t_update
     debug_print(DEBUG_INFO, "### Opened ###")
     cmd = packets.build_player_command('LOGIN',
-        protocol=games.get_protocol(),
-        name='test',
-        session='none',
-        horizonX=int(1920 / 2),
-        horizonY=int(1920 / 2),
-        flag='GB'
-    )
+                                       protocol=games.get_protocol(),
+                                       name='test',
+                                       session='none',
+                                       horizonX=int(1920 / 2),
+                                       horizonY=int(1920 / 2),
+                                       flag='GB'
+                                       )
     ws.send(cmd, opcode=websocket.ABNF.OPCODE_BINARY)
     _t_update = ClientUpdate()
     _t_update.start()
+
 
 def on_close(ws):
     global _t_update
@@ -112,6 +120,7 @@ def on_close(ws):
     if _t_update is not None:
         _t_update.stop()
         _t_update.join()
+
 
 def on_message(ws, message):
     message = packets.decode_server_command(message)
@@ -149,7 +158,7 @@ def on_message(ws, message):
         cmd = packets.build_player_command('SCOREDETAILED')
         ws.send(cmd, opcode=websocket.ABNF.OPCODE_BINARY)
 
-        #cmd = packets.build_player_command('COMMAND', dict(
+        # cmd = packets.build_player_command('COMMAND', dict(
         #    com='spectate',
         #    data=str(last_id)
         #))
@@ -222,7 +231,7 @@ def on_message(ws, message):
         if message.command in ['EVENT_REPEL', 'PLAYER_HIT']:
             for player in message.players:
                 players[player.id].update(player)
-            
+
             # Handle projectiles hijacked by repel
             if message.command == 'EVENT_REPEL':
                 debug_print(DEBUG_ACTION, u"{} uses repel. {} players and {} projectiles repelled.".format(players[message.id].name, len(message.players), len(message.mobs)))
@@ -288,20 +297,23 @@ def on_message(ws, message):
 
     debug_print(DEBUG_WARNING, u"Unhandled command: {}".format(message.command))
 
+
 def on_error(ws, error):
     debug_print(DEBUG_ERROR, error)
+
 
 def run():
     global ws
     websocket.enableTrace(False)
     ws = websocket.WebSocketApp(GAME_HOST,
-        subprotocols=['binary'],
-        on_message = on_message,
-        on_error = on_error,
-        on_close = on_close,
-        on_open = on_open)
+                                subprotocols=['binary'],
+                                on_message=on_message,
+                                on_error=on_error,
+                                on_close=on_close,
+                                on_open=on_open)
 
-    ws.run_forever(origin = 'https://airma.sh')
+    ws.run_forever(origin='https://airma.sh')
+
 
 if __name__ == "__main__":
     run()

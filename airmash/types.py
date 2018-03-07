@@ -29,20 +29,20 @@ error_types = {
     1: ('DISCONNECTED', 'Packet flooding detected'),
     2: ('BANNED', 'Packet flooding detected'),
     3: ('BANNED', 'You have been globally banned'),
-    4: ('UNKNOWN', 'UNKNOWN'), # Disconnect?
+    4: ('UNKNOWN', 'UNKNOWN'),  # Disconnect?
     5: ('RESPAWN', 'Full health and 2 seconds of inactivity required'),
     6: ('DISCONNECTED', 'AFK for more than 10 minutes'),
     7: ('DISCONNECTED', 'You have been kicked out'),
     8: ('DISCONNECTED', 'Invalid login data'),
     9: ('DISCONNECTED', 'Incorrect protocol level'),
-    10:('BANNED', 'Account banned'),
-    11:('DISCONNECTED', 'Account already logged in'),
-    12:('RESPAWN', 'Cannot respawn or change aircraft in a Battle Royale game'),
-    13:('ALERT', 'Full health and 2 seconds of inactivity required'),
-    20:('INFORMATION', 'Not enough upgrade points'),
-    30:('ALERT', 'Chat throttled to prevent spamming'),
-    31:('ALERT', 'Flag change too fast'),
-    100:('ERROR', 'Unknown command')
+    10: ('BANNED', 'Account banned'),
+    11: ('DISCONNECTED', 'Account already logged in'),
+    12: ('RESPAWN', 'Cannot respawn or change aircraft in a Battle Royale game'),
+    13: ('ALERT', 'Full health and 2 seconds of inactivity required'),
+    20: ('INFORMATION', 'Not enough upgrade points'),
+    30: ('ALERT', 'Chat throttled to prevent spamming'),
+    31: ('ALERT', 'Flag change too fast'),
+    100: ('ERROR', 'Unknown command')
 }
 
 player_status = {
@@ -177,67 +177,92 @@ server_commands = {
 
 ServerCommands = Enum(Int8ul, **server_commands)
 
+
 class AdapterCoordX(Adapter):
     """Converts X coordinate from a uint16 to the range +-16384"""
+
     def _encode(self, obj, ctx):
         return int(obj * 2) + 32768
+
     def _decode(self, obj, ctx):
         return (obj - 32768) / 2.0
 
+
 class AdapterCoordY(Adapter):
     """Converts Y coordinate from a uint16 to the range +-8192"""
+
     def _encode(self, obj, ctx):
         return (obj * 4) + 32768
+
     def _decode(self, obj, ctx):
         return (obj - 32768) / 4.0
+
 
 class AdapterRotation(Adapter):
     """Converts rotation from a uint16 to the range 0-10
     In reality only the range 0-2*PI is used AFAIK since this
     value describes the ships rotation in radians"""
+
     def _encode(self, obj, ctx):
         return int(obj * 6553.6)
+
     def _decode(self, obj, ctx):
         return obj / 6553.6
 
+
 class AdapterSpeed(Adapter):
     """Converts speed from a uint16 to the range +-10"""
+
     def _encode(self, obj, ctx):
         return int(obj * 1638.4) + 32768
+
     def _decode(self, obj, ctx):
         return (obj - 32768) / 1638.4
 
+
 class AdapterAccel(Adapter):
     """Converts acceleration from a uint16 to the range +-1"""
+
     def _encode(self, obj, ctx):
         return int(obj * 32768) + 32768
+
     def _decode(self, obj, ctx):
         return (obj - 32768) / 32768.0
 
+
 class AdapterRegen(Adapter):
     """Converts regen from a uint16 to +-0.032768"""
+
     def _encode(self, obj, ctx):
         return int(obj * 1e6) + 32768
+
     def _decode(self, obj, ctx):
         return (obj - 32768) / 1e6
 
+
 class AdapterHealthEnergy(Adapter):
     """Converts health/energy from a uint8 to 0-1"""
+
     def _encode(self, obj, ctx):
         return int(obj * 255)
+
     def _decode(self, obj, ctx):
         return obj / 255
+
 
 class AdapterCoord24(Adapter):
     """Converts a uint24 to 0-16384
     producing a high-precision X or Y coordinate"""
+
     def _encode(self, obj, ctx):
         obj = int((obj * 512) + 8388608)
         return ((obj << 16) & 0xff0000) | (obj >> 8)
+
     def _decode(self, obj, ctx):
         # The 24bit high-precision Coord24 has a really weird byte order
         unpacked = ((obj << 8) & 0xffff00) | (obj >> 16)
         return (unpacked - 8388608) / 512.0
+
 
 # Define types for various ship telemetry
 CoordX = AdapterCoordX(Int16ul)

@@ -4,6 +4,7 @@ from .mob import Mob
 from . import games
 import websocket
 
+
 class Client:
     def __init__(self, enable_debug=False, enable_chat=True):
         self._handlers = {}
@@ -30,13 +31,13 @@ class Client:
     def _on_open(self, ws):
         self._debug_print(packets.DEBUG_INFO, "### Opened ###")
         cmd = packets.build_player_command('LOGIN',
-            protocol=games.get_protocol(),
-            name=self._login_name,
-            session='none',
-            horizonX=int(1920 / 2),
-            horizonY=int(1920 / 2),
-            flag=self._login_flag
-        )
+                                           protocol=games.get_protocol(),
+                                           name=self._login_name,
+                                           session='none',
+                                           horizonX=int(1920 / 2),
+                                           horizonY=int(1920 / 2),
+                                           flag=self._login_flag
+                                           )
         self.send(cmd)
 
     def _on_close(self, ws):
@@ -77,13 +78,13 @@ class Client:
 
         websocket.enableTrace(enable_trace)
         self.websocket = websocket.WebSocketApp(game_host,
-            subprotocols=['binary'],
-            on_message = self._on_message,
-            on_error = self._on_error,
-            on_close = self._on_close,
-            on_open = self._on_open)
+                                                subprotocols=['binary'],
+                                                on_message=self._on_message,
+                                                on_error=self._on_error,
+                                                on_close=self._on_close,
+                                                on_open=self._on_open)
 
-        self.websocket.run_forever(origin = 'https://airma.sh')
+        self.websocket.run_forever(origin='https://airma.sh')
 
     def send(self, command):
         self.websocket.send(command, opcode=websocket.ABNF.OPCODE_BINARY)
@@ -187,7 +188,7 @@ class Client:
             if message.command in ['EVENT_REPEL', 'PLAYER_HIT']:
                 for player in message.players:
                     self.players[player.id].update(player)
-                
+
                 # Handle self.projectiles hijacked by repel
                 if message.command == 'EVENT_REPEL':
                     self._debug_print(packets.DEBUG_ACTION, u"{} uses repel. {} self.players and {} self.projectiles repelled.".format(self.players[message.id].name, len(message.players), len(message.mobs)))
@@ -255,37 +256,37 @@ class Client:
 
     def login(self, name, horizon, protocol=4, session='none', flag='GB'):
         """Login to server
-        
+
         :param name: player name, 0-255 chars utf-8
         :param horizon: player horizon, tuple of (x, y)
         :param protocol: protocol (default 4)
         :param session: session token (default none)
         :param flag: two-letter country code of flag (default GB)
-        
+
         """
         packet = packets.build_player_command('LOGIN',
-            protocol=protocol,
-            name=name,
-            session=session,
-            horizonX=horizon[0],
-            horizonY=horizon[1],
-            flag=flag
-        )
+                                              protocol=protocol,
+                                              name=name,
+                                              session=session,
+                                              horizonX=horizon[0],
+                                              horizonY=horizon[1],
+                                              flag=flag
+                                              )
         self.send(packet)
 
     def horizon(self, x, y):
         """Update server with x/y screen resolution
-        
+
         :param x: horizontal screen (viewport) resolution divided by 2
         :param y: vertical screen resolution divided by 2
-        
+
         """
         packet = packets.build_player_command('HORIZON', horizonX=x, horizonY=y)
         self.send(packet)
 
     def pong(self, num):
         """Response to a server ping
-        
+
         :param num: num value from server ping packet
 
         """
@@ -300,9 +301,9 @@ class Client:
 
         """
         packet = packets.build_player_command('COMMAND',
-            com=command,
-            data=data
-        )
+                                              com=command,
+                                              data=data
+                                              )
         self.send(packet)
 
     def key(self, key, state):
@@ -329,7 +330,7 @@ class Client:
         """
         packet = packets.build_player_command('CHAT', text=text)
         self.send(packet)
-    
+
     def whisper(self, player, text):
         """Send a whisper
 
@@ -341,9 +342,9 @@ class Client:
             raise ValueError("player must be an instance of Player")
 
         packet = packets.build_player_command('WHISPER',
-            id=player.id,
-            text=text
-        )
+                                              id=player.id,
+                                              text=text
+                                              )
         self.send(packet)
 
     def teamchat(self, text):

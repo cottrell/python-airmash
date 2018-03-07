@@ -6,6 +6,7 @@ from airmash.client import Client
 
 client = Client(enable_debug=True)
 
+
 class StoppableThread(threading.Thread):
     def __init__(self, *args, **kwargs):
         super(StoppableThread, self).__init__(*args, **kwargs)
@@ -17,6 +18,7 @@ class StoppableThread(threading.Thread):
     def wait(self, timeout=1):
         return self._event.wait(timeout=timeout)
 
+
 class ClientUpdate(StoppableThread):
     def __init__(self, *args, **kwargs):
         StoppableThread.__init__(self, *args, **kwargs)
@@ -26,12 +28,15 @@ class ClientUpdate(StoppableThread):
             if client.connected:
                 client.key('LEFT', True)
 
+
 def track_position(player, key, old, new):
     new = [int(x) for x in new]
     print("Position: {} {}".format(*new))
 
+
 def track_rotation(player, key, old, new):
     print("Rotation: {}".format(new))
+
 
 @client.on('LOGIN')
 def on_login(client, message):
@@ -40,17 +45,20 @@ def on_login(client, message):
     client.player.on_change('position', track_position)
     client.player.on_change('rotation', track_rotation)
 
+
 @client.on('PLAYER_HIT')
 def on_hit(client, message):
     for player in message.players:
         if player.id == client.player.id:
             print("Uh oh! I've been hit!")
-    
+
+
 _mydir = os.path.realpath(os.path.dirname(__file__))
 _hashfile = os.path.join(_mydir, '.hashes')
 if not os.path.exists(_hashfile):
     print(secrets.token_hex(nbytes=2), file=open(_hashfile, 'w'))
 _hash = open(_hashfile).read().strip()
+
 
 def run(name='TestBot_{}'.format(_hash), flag='GB', region='eu', room='ffa1', enable_trace=False):
     print('name = {}'.format(name))
@@ -66,6 +74,7 @@ def run(name='TestBot_{}'.format(_hash), flag='GB', region='eu', room='ffa1', en
     )
     _t_update.stop()
     _t_update.join()
+
 
 if __name__ == '__main__':
     argh.dispatch_command(run)

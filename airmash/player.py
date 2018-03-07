@@ -1,7 +1,9 @@
 import math
 
+
 def ks(player, k, a, b):
     print("[{}] {}: {}".format(player.name, k, a))
+
 
 class Player():
     def __init__(self, id, data={}):
@@ -17,7 +19,7 @@ class Player():
 
     def update(self, data):
         old = self.__dict__.copy()
-        
+
         self.clock = self._get_default(data, 'clock', 0)
         self.status = self._get_default(data, 'status', 0)
         self.level = self._get_default(data, 'level', 0)
@@ -54,12 +56,11 @@ class Player():
 
                 if key == 'posX' or key == 'posY':
                     self._handle_change('position', (old.get('posX'), old.get('posY')), (self.posX, self.posY))
-                
+
                 if key == 'speedX' or key == 'speedY':
                     self._handle_change('speed', (old.get('posX'), old.get('posY')), (self.posX, self.posY))
-                    
 
-        #for key in self.__dict__.keys():
+        # for key in self.__dict__.keys():
         #    value = self.__dict__[key]
         #    old_value = old[key]
         #    if value != old_value:
@@ -77,16 +78,16 @@ class Player():
         self._handlers[key] = handler
 
     def dist_from(self, other):
-      return math.sqrt((self.posX - other.posX)**2 + (self.posY - other.posY)**2)
+        return math.sqrt((self.posX - other.posX)**2 + (self.posY - other.posY)**2)
 
     def angle_to(self, other):
-      """
-Hairy. On the world map, straight up is the Y axis, and is also direction 0. In the standard
-interpretation of the atan2 function, angles are measured from the X axis. Thus, atan2(x,y)
-is used here rather than the more expected y,x order of arguments.
-The values for x and y are from self, so we subtract the values of other from self.
-      """ 
-      ang = math.atan2((-self.posX + other.posX),(self.posY - other.posY))
-      if (ang < 0):
-        ang += math.pi * 2
-      return ang
+        """
+  Hairy. On the world map, straight up is the Y axis, and is also direction 0. In the standard
+  interpretation of the atan2 function, angles are measured from the X axis. Thus, atan2(x,y)
+  is used here rather than the more expected y,x order of arguments.
+  The values for x and y are from self, so we subtract the values of other from self.
+        """
+        ang = math.atan2((-self.posX + other.posX), (self.posY - other.posY))
+        if (ang < 0):
+            ang += math.pi * 2
+        return ang
