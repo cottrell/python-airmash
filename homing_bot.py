@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
+import os
 import sys
-sys.path.append("..")
-
 import random
 from airmash.client import Client
 from airmash.player import Player
@@ -10,6 +9,9 @@ import threading
 import time
 import names
 import math
+# sys.path.append("..")
+
+_mydir = os.path.realpath(os.path.dirname(__file__))
 
 UP = 'UP'
 DOWN = 'DOWN'
@@ -29,6 +31,7 @@ ZERO_PLAYER.posX = 0
 
 me = None
 
+client = Client()
 
 def rare():
     return random.randrange(0, 10) == 0
@@ -168,30 +171,28 @@ class ClientUpdate(StoppableThread):
             #my_status = client.players[me].status
 
 
-client = Client()
-
-
 @client.on('LOGIN')
 def on_login(client, message):
     print("Client has logged in!")
 
+def run(name=None, flag='GB', region='eu', room='ffa1', enable_trace=True, enable_debug=True):
+    if name is None:
+        name = names.get_full_name()
+    print('name = {}'.format(name))
+    _t_update = ClientUpdate()
+    _t_update.start()
 
-_t_update = ClientUpdate()
-_t_update.start()
+    client.connect(
+        name=name,
+        flag=flag,
+        region=region,
+        room=room,
+        enable_trace=True
+    )
+    client._enable_debug = enable_debug
 
-name = names.get_full_name()
-if rare():
-    name = "Robot " + name
-name = name[:20]
-print("Name is ", name)
+    _t_update.stop()
+    _t_update.join()
 
-client.connect(
-    name=name,
-    flag='US',
-    region='us',
-    room='ffa1',
-    enable_trace=True
-)
-
-_t_update.stop()
-_t_update.join()
+if __name__ == '__main__':
+    argh.dispatch_command(run)

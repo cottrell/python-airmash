@@ -21,7 +21,7 @@ RIGHT = 'RIGHT'
 FIRE = 'FIRE'
 SPECIAL = 'SPECIAL'
 
-client = Client(enable_debug=True)
+client = Client()
 
 def rare():
     return random.randrange(0, 10) == 0
@@ -81,7 +81,8 @@ class ClientUpdate(StoppableThread):
             else:
                 self.send_keydown(key)
                 pressedKeys.append(key)
-            my_status = players[me].status
+            me = client.player_id
+            my_status = client.players[me].status
             #print("Status: {}".format(my_status))
             #print("Position: {}:{}".format(me.posX, me.posY))
 
@@ -90,13 +91,13 @@ class ClientUpdate(StoppableThread):
 def on_login(client, message):
     print("Client has logged in!")
 
-def run(name=None, flag='GB', region='eu', room='ffa1', enable_trace=False):
+def run(name=None, flag='GB', region='eu', room='ffa1', enable_trace=True, enable_debug=True):
     if name is None:
         name = names.get_full_name()
     print('name = {}'.format(name))
     _t_update = ClientUpdate()
     _t_update.start()
-    
+
     client.connect(
         name=name,
         flag=flag,
@@ -104,7 +105,8 @@ def run(name=None, flag='GB', region='eu', room='ffa1', enable_trace=False):
         room=room,
         enable_trace=True
     )
-    
+    client._enable_debug = enable_debug
+
     _t_update.stop()
     _t_update.join()
 
