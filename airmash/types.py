@@ -184,7 +184,7 @@ class AdapterCoordX(Adapter):
     def _encode(self, obj, ctx):
         return int(obj * 2) + 32768
 
-    def _decode(self, obj, ctx):
+    def _decode(self, obj, ctx, path):
         return (obj - 32768) / 2.0
 
 
@@ -194,7 +194,7 @@ class AdapterCoordY(Adapter):
     def _encode(self, obj, ctx):
         return (obj * 4) + 32768
 
-    def _decode(self, obj, ctx):
+    def _decode(self, obj, ctx, path):
         return (obj - 32768) / 4.0
 
 
@@ -206,7 +206,7 @@ class AdapterRotation(Adapter):
     def _encode(self, obj, ctx):
         return int(obj * 6553.6)
 
-    def _decode(self, obj, ctx):
+    def _decode(self, obj, ctx, path):
         return obj / 6553.6
 
 
@@ -216,7 +216,7 @@ class AdapterSpeed(Adapter):
     def _encode(self, obj, ctx):
         return int(obj * 1638.4) + 32768
 
-    def _decode(self, obj, ctx):
+    def _decode(self, obj, ctx, path):
         return (obj - 32768) / 1638.4
 
 
@@ -226,7 +226,7 @@ class AdapterAccel(Adapter):
     def _encode(self, obj, ctx):
         return int(obj * 32768) + 32768
 
-    def _decode(self, obj, ctx):
+    def _decode(self, obj, ctx, path):
         return (obj - 32768) / 32768.0
 
 
@@ -236,7 +236,7 @@ class AdapterRegen(Adapter):
     def _encode(self, obj, ctx):
         return int(obj * 1e6) + 32768
 
-    def _decode(self, obj, ctx):
+    def _decode(self, obj, ctx, path):
         return (obj - 32768) / 1e6
 
 
@@ -246,7 +246,7 @@ class AdapterHealthEnergy(Adapter):
     def _encode(self, obj, ctx):
         return int(obj * 255)
 
-    def _decode(self, obj, ctx):
+    def _decode(self, obj, ctx, path):
         return obj / 255
 
 
@@ -258,7 +258,7 @@ class AdapterCoord24(Adapter):
         obj = int((obj * 512) + 8388608)
         return ((obj << 16) & 0xff0000) | (obj >> 8)
 
-    def _decode(self, obj, ctx):
+    def _decode(self, obj, ctx, path):
         # The 24bit high-precision Coord24 has a really weird byte order
         unpacked = ((obj << 8) & 0xffff00) | (obj >> 16)
         return (unpacked - 8388608) / 512.0
